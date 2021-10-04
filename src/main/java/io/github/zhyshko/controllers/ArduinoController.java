@@ -19,14 +19,9 @@ public class ArduinoController {
 	@Autowired
 	private RoomFacade roomFacade;
 
-	@PostMapping(value = "/cardEnter")
+	@PostMapping(value = "/card")
     public boolean cardEnter(HttpServletResponse res, @RequestBody RoomAccess roomEnterData) {
-        return roomFacade.userEnterToRoom(roomEnterData);
-    }
-
-	@PostMapping(value = "/cardExit")
-    public boolean cardExit(HttpServletResponse res, @RequestBody RoomAccess roomExitData) {
-        return roomFacade.userExitFromRoom(roomExitData);
+        return roomFacade.userCardRequest(roomEnterData);
     }
 
 	@PostMapping(value = "/status")

@@ -6,10 +6,7 @@ import io.github.zhyshko.dto.RoomStatus;
 public interface RoomFacade {
 
 	void saveNewData(RoomStatus roomStatus);
-	boolean userEnterToRoom(RoomAccess roomAccessData);
-	boolean userExitFromRoom(RoomAccess roomAccessData);
-	boolean addUserToRoom(RoomAccess roomEnterData);
-	boolean removeUserFromRoom(RoomAccess roomExitData);
+	boolean userCardRequest(RoomAccess roomAccessData);
 	RoomStatus prepareRoomStatus(long roomId);
 
 
