@@ -7,10 +7,12 @@ import org.springframework.stereotype.Component;
 
 import io.github.zhyshko.dto.RoomAccess;
 import io.github.zhyshko.dto.RoomStatus;
+import io.github.zhyshko.dto.Stats;
 import io.github.zhyshko.facade.RoomFacade;
 import io.github.zhyshko.model.Room;
 import io.github.zhyshko.model.User;
 import io.github.zhyshko.service.RoomService;
+import io.github.zhyshko.service.StatsService;
 import io.github.zhyshko.service.UserService;
 
 @Component
@@ -22,6 +24,9 @@ public class DefaultRoomFacade implements RoomFacade {
 	@Autowired
 	private UserService userService;
 
+	@Autowired
+	private StatsService statsService;
+
 	@Override
 	public void saveNewData(RoomStatus roomStatus) {
 		Room room;
@@ -32,6 +37,7 @@ public class DefaultRoomFacade implements RoomFacade {
 		} catch (NullPointerException e) {
 			room = Room.builder().id(roomStatus.getRoomId()).airPollution(roomStatus.getAirPollution()).lastUpdatedTime(LocalDateTime.now()).build();
 		}
+		statsService.saveStat(room.getId(), room.getAirPollution());
 		roomService.saveRoom(room);
 	}
 
@@ -114,6 +120,11 @@ public class DefaultRoomFacade implements RoomFacade {
 				.peopleInsideCount(room.getPeopleCount())
 				.lastUpdatedTime(room.getLastUpdatedTime())
 				.build();
+	}
+
+	@Override
+	public Stats getLastNRoomStats(long roomId, int entriesCount) {
+		return statsService.getStats(roomId).getlastNStats(entriesCount);
 	}
 
 }
