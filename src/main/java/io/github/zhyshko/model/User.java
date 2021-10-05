@@ -2,8 +2,6 @@ package io.github.zhyshko.model;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -22,9 +20,5 @@ public class User {
 	@Id
 	private String id;
 	private String username;
-
-	@ManyToOne
-	@JoinColumn(name="room_id", nullable=true)
-	private Room currentRoom;
 
 }

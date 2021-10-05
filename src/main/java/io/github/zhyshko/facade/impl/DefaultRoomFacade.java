@@ -36,65 +36,14 @@ public class DefaultRoomFacade implements RoomFacade {
 	}
 
 	@Override
-	public boolean userEnterToRoom(RoomAccess roomAccessData) {
-		if (checkUserAccess(roomAccessData) && !userAlreadyInRoom(roomAccessData)) {
-			return addUserToRoom(roomAccessData);
-		} else {
-			return false;
-		}
-	}
-
-	@Override
-	public boolean userExitFromRoom(RoomAccess roomAccessData) {
-		if (checkUserAccess(roomAccessData) && userAlreadyInRoom(roomAccessData)) {
-			return removeUserFromRoom(roomAccessData);
-		} else {
-			return false;
-		}
+	public boolean userCardRequest(RoomAccess roomAccessData) {
+		return checkUserAccess(roomAccessData);
 	}
 
 	private boolean checkUserAccess(RoomAccess roomAccessData) {
 		Room room = roomService.getById(roomAccessData.getRoomId());
 		User user = userService.getById(roomAccessData.getUserId());
 		return room.getAllowedUsers() != null && room.getAllowedUsers().contains(user);
-	}
-
-	private boolean userAlreadyInRoom(RoomAccess roomAccessData) {
-		Room room = roomService.getById(roomAccessData.getRoomId());
-		User user = userService.getById(roomAccessData.getUserId());
-		return user.getCurrentRoom() != null && user.getCurrentRoom().equals(room);
-	}
-
-	@Override
-	public boolean addUserToRoom(RoomAccess roomEnterData) {
-		try {
-			Room room = roomService.getById(roomEnterData.getRoomId());
-			User user = userService.getById(roomEnterData.getUserId());
-			room.getUsersInside().add(user);
-			room.setPeopleCount(room.getPeopleCount() + 1);
-			user.setCurrentRoom(room);
-			roomService.saveRoom(room);
-			userService.saveUser(user);
-		} catch (Exception e) {
-			return false;
-		}
-		return true;
-	}
-
-	@Override
-	public boolean removeUserFromRoom(RoomAccess roomExitData) {
-		try {
-			Room room = roomService.getById(roomExitData.getRoomId());
-			User user = userService.getById(roomExitData.getUserId());
-			room.getUsersInside().remove(user);
-			user.setCurrentRoom(null);
-			room.setPeopleCount(room.getPeopleCount() - 1);
-			roomService.saveRoom(room);
-			userService.saveUser(user);
-		} catch (Exception e) {
-			return false;
-		}
-		return true;
 	}
 
 	public void setRoomService(RoomService roomService) {
@@ -111,7 +60,6 @@ public class DefaultRoomFacade implements RoomFacade {
 		return RoomStatus.builder()
 				.roomId(roomId)
 				.airPollution(room.getAirPollution())
-				.peopleInsideCount(room.getPeopleCount())
 				.lastUpdatedTime(room.getLastUpdatedTime())
 				.build();
 	}

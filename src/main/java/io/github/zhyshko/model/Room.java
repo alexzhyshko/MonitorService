@@ -9,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -31,11 +30,6 @@ public class Room{
 	private long id;
 
 	private int airPollution;
-
-	private int peopleCount;
-
-	@OneToMany(mappedBy="currentRoom", cascade= {CascadeType.ALL})
-	private Set<User> usersInside;
 
 	@ManyToMany(cascade = { CascadeType.ALL })
     @JoinTable(
