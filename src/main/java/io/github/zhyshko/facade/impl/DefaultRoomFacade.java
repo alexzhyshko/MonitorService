@@ -5,12 +5,14 @@ import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import io.github.zhyshko.dto.Logs;
 import io.github.zhyshko.dto.RoomAccess;
 import io.github.zhyshko.dto.RoomStatus;
 import io.github.zhyshko.dto.Stats;
 import io.github.zhyshko.facade.RoomFacade;
 import io.github.zhyshko.model.Room;
 import io.github.zhyshko.model.User;
+import io.github.zhyshko.service.LogsService;
 import io.github.zhyshko.service.RoomService;
 import io.github.zhyshko.service.StatsService;
 import io.github.zhyshko.service.UserService;
@@ -26,6 +28,9 @@ public class DefaultRoomFacade implements RoomFacade {
 
 	@Autowired
 	private StatsService statsService;
+
+	@Autowired
+    private LogsService logsService;
 
 	@Override
 	public void saveNewData(RoomStatus roomStatus) {
@@ -43,10 +48,18 @@ public class DefaultRoomFacade implements RoomFacade {
 
 	@Override
 	public boolean userCardRequest(RoomAccess roomAccessData) {
-		return checkUserAccess(roomAccessData);
+	    boolean userAccessGranted = checkUserAccess(roomAccessData);
+	    User user = userService.getById(roomAccessData.getUserId());
+	    String message = prepareRoomAccessLogMessage(userAccessGranted, user.getUsername());
+	    logsService.saveLog(roomAccessData.getRoomId(), message);
+		return userAccessGranted;
 	}
 
-	private boolean checkUserAccess(RoomAccess roomAccessData) {
+	private String prepareRoomAccessLogMessage(boolean userAccessGranted, String username) {
+        return username+"|"+(userAccessGranted?"GRANTED":"REJECTED");
+    }
+
+    private boolean checkUserAccess(RoomAccess roomAccessData) {
 		Room room = roomService.getById(roomAccessData.getRoomId());
 		User user = userService.getById(roomAccessData.getUserId());
 		return room.getAllowedUsers() != null && room.getAllowedUsers().contains(user);
@@ -74,5 +87,10 @@ public class DefaultRoomFacade implements RoomFacade {
 	public Stats getLastNRoomStats(long roomId, int entriesCount) {
 		return statsService.getStats(roomId).getlastNStats(entriesCount);
 	}
+
+    @Override
+    public Logs getLastNRoomLogs(long roomId, int entriesCount) {
+        return logsService.getLogs(roomId).getlastNLogs(entriesCount);
+    }
 
 }

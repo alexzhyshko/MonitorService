@@ -4,9 +4,12 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.stereotype.Service;
+
 import io.github.zhyshko.dto.Stats;
 import io.github.zhyshko.service.StatsService;
 
+@Service
 public class DefaultStatsService implements StatsService{
 
 	private Map<Long, Stats> stats = new HashMap<>();
